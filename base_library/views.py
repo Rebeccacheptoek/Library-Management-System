@@ -20,3 +20,9 @@ def book_index(request):
     context = {'books': books}
 
     return render(request, 'books.html', context)
+
+
+# Create your views here.
+def index(request):
+    return render(request, 'index.html')
+

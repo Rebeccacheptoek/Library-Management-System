@@ -41,3 +41,4 @@ class Librarian(models.Model):
     staff_ID = models.IntegerField()
     permission_role = models.BooleanField(default=0)
     shift_schedule = models.DateTimeField(auto_now=True)
+# Create your models here.

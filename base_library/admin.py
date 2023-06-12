@@ -7,3 +7,5 @@ admin.site.register(Member)
 admin.site.register(Transaction)
 admin.site.register(Category)
 admin.site.register(Librarian)
+
+# Register your models here.
