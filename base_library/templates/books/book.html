@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<!--<h1>Books Available</h1>-->
+<!--<div class="form-control col-lg-12">-->
+<!--    {% for book in books %}-->
+<!--    <div class="row">-->
+<!--    <div class="col-lg-8">-->
+<!--        <div class="row">-->
+<!--            <h2><a href="{% url 'book' %}">{{ book.title }}</a></h2>-->
+
+<!--            <p>{{ book.author }}</p>-->
+<!--            <p>{{ book.quantity }}</p>-->
+<!--            <p>{{ book.shelf_location }}</p>-->
+<!--            <p>{{ book.availability }}</p>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--        </div>-->
+<!--    {% endfor %}-->
+<!--     <div class="col-lg-4">-->
+<!--            <div class="nav navbar navbar-right">-->
+<!--                <button class="btn btn-primary text-white"><a href="{% url 'add-book' %}">Add Book</a></button>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--</div>-->
+ <section class="section">
+      <div class="row align-items-top">
+        <div class="col-lg-6">
+            <!-- Card with an image on left -->
+                {% for book in books %}
+          <div class="card mb-3">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="{% static 'assets/img/card.jpg' %}" class="img-fluid rounded-start" alt="...">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">{{ book.title }} by {{ book.author }}</h5>
+                  <p class="card-text">Quantity - {{ book.quantity }}</br> Location - {{ book.shelf_location }}
+            </br> Available - {{ book.availability }}.</p>
+
+                </div>
+              </div>
+            </div>
+          </div><!-- End Card with an image on left -->
+    {% endfor %}
+        </div>
+
+      </div>
+    </section>
+ {% endblock %}

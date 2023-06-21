@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <section class="section">
+      <div class="row">
+
+        <div class="col-lg-12">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Add Book</h5>
+
+              <!-- Custom Styled Validation with Tooltips -->
+              <form method="post" class="row g-3 needs-validation" novalidate>
+                {% csrf_token %}
+                 <div class="col-12">
+                      <label for="yourName" class="form-label">Title</label>
+                      <input type="text" name="title" class="form-control" id="yourName" required>
+                      <div class="invalid-feedback">Please, enter book title!</div>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="yourEmail" class="form-label">Author</label>
+                      <input type="text" name="author" class="form-control" id="yourEmail" required>
+                      <div class="invalid-feedback">Book author!</div>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="yourPassword1" class="form-label">Password</label>
+                      <div class="input-group has-validation">
+                        <input type="number" name="quantity" class="form-control" id="yourPassword1" required>
+                        <div class="invalid-feedback">Quantity</div>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <label for="yourPassword2" class="form-label">Confirm Password</label>
+                      <div class="input-group has-validation">
+                        <input type="text" name="shelf_location" class="form-control" id="yourPassword2" required>
+                        <div class="invalid-feedback">Location</div>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <label for="availability" class="form-label">Availability</label>
+                      <div class="input-group has-validation">
+                        <select name="availability" id="availability">
+                          <option value="1">Yes</option>
+                          <option value="0">No</option>
+                        </select>
+                        <div class="invalid-feedback">Availability</div>
+                      </div>
+                    </div>
+
+
+                    <div class="col-12">
+                      <button class="btn btn-primary w-100" type="submit">Submit</button>
+                    </div>
+              </form><!-- End Custom Styled Validation with Tooltips -->
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+{% endblock %}

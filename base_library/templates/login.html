@@ -68,19 +68,20 @@
                     <p class="text-center small">Enter your email & password to login</p>
                   </div>
 
-                  <form class="row g-3 needs-validation" novalidate>
+                  <form method="post" action="{% url 'login' %}" class="row g-3 needs-validation" novalidate>
+                    {% csrf_token %}
+ {{form.as_p}}
+<!--                    <div class="col-12">-->
+<!--                      <label for="yourEmail" class="form-label">Your Email</label>-->
+<!--                      <input type="email" name="email" class="form-control" id="yourEmail" required>-->
+<!--                      <div class="invalid-feedback">Please enter a valid Email address!</div>-->
+<!--                    </div>-->
 
-                    <div class="col-12">
-                      <label for="yourEmail" class="form-label">Your Email</label>
-                      <input type="email" name="email" class="form-control" id="yourEmail" required>
-                      <div class="invalid-feedback">Please enter a valid Email address!</div>
-                    </div>
-
-                    <div class="col-12">
-                      <label for="yourPassword" class="form-label">Password</label>
-                      <input type="password" name="password" class="form-control" id="yourPassword" required>
-                      <div class="invalid-feedback">Please enter your password!</div>
-                    </div>
+<!--                    <div class="col-12">-->
+<!--                      <label for="yourPassword" class="form-label">Password</label>-->
+<!--                      <input type="password" name="password" class="form-control" id="yourPassword" required>-->
+<!--                      <div class="invalid-feedback">Please enter your password!</div>-->
+<!--                    </div>-->
 
                     <div class="col-12">
                       <div class="form-check">

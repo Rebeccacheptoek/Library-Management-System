@@ -6,7 +6,7 @@ class Book(models.Model):
     author = models.CharField(max_length=100)
     quantity = models.IntegerField()
     shelf_location = models.TextField()
-    availability = models.BooleanField(null=True, blank=True)
+    availability = models.BooleanField(null=True, blank=True, default=1)
 
 
 class Member(models.Model):
@@ -16,7 +16,7 @@ class Member(models.Model):
     phone = models.CharField(max_length=200)
     membership_ID = models.IntegerField()
     borrowed_books = models.IntegerField()
-    penalty_status = models.BooleanField()
+    penalty_status = models.BooleanField(null=True, default=0)
 
 
 class Transaction(models.Model):
@@ -41,4 +41,3 @@ class Librarian(models.Model):
     staff_ID = models.IntegerField()
     permission_role = models.BooleanField(default=0)
     shift_schedule = models.DateTimeField(auto_now=True)
-# Create your models here.
