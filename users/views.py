@@ -30,7 +30,7 @@ def register(request):
             password = form.cleaned_data['password1']
             user = authenticate(email=email, password=password)
             login(request, user)
-            return redirect('home')
+            return redirect('book')
 
         else:
             return render(request, 'registration/register.html', {'form': form})
@@ -42,7 +42,7 @@ def register(request):
 
 def login_user(request):
     if request.user.is_authenticated:
-        return redirect('home')
+        return redirect('book')
 
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -51,7 +51,7 @@ def login_user(request):
         print(email, password)
         if user is not None:
             login(request, user)
-            return redirect('home')
+            return redirect('book')
         else:
             form = AuthenticationForm()
             return render(request, 'registration/login.html', {'form': form})
@@ -65,4 +65,4 @@ def login_user(request):
 
 def logout_user(request):
     logout(request)
-    return redirect('home')
+    return redirect('book')

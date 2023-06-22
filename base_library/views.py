@@ -3,12 +3,13 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic.edit import CreateView
 
 from base_library.forms import BookForm, MemberForm
-from base_library.models import Book, Member
+from base_library.models import Book, Member, Transaction
 from users.forms import CustomUserCreationForm
 
 
@@ -110,6 +111,12 @@ def update_book(request, pk):
     return render(request, 'books/update_book.html', context)
 
 
+def member_index(request):
+    members = Member.objects.all()
+    context = {'members': members}
+    return render(request, 'members/member_list.html', context)
+
+
 @login_required
 def add_member(request):
     members = Member.objects.all()
@@ -128,4 +135,72 @@ def add_member(request):
     return render(request, 'members/add_member.html', context)
 
 
+@login_required
+def update_member(request, pk):
+    member = Member.objects.get(id=pk)
+    form = MemberForm(instance=member)
 
+    if request.method == 'POST':
+        form = MemberForm(request.POST, instance=member)
+        if form.is_valid():
+            form.save()
+            return redirect('book')
+
+    context = {'member': member, 'form': form}
+
+    return render(request, 'members/update_member.html', context)
+
+
+def member_detail(request, member_id):
+    member = get_object_or_404(Member, id=member_id)
+    borrowed_books = Transaction.objects.filter(member=member, is_returned=False)
+    penalty_status = member.penalty_status
+    context = {'member': member, 'borrowed_books': borrowed_books, 'penalty_status': penalty_status}
+    return render(request, 'members/member_detail.html', context)
+
+
+def issue_book(request):
+    members = Member.objects.all()
+    books = Book.objects.filter(quantity__gt=0)
+
+    if request.method == 'POST':
+        member_id = request.POST.get('member')
+        book_id = request.POST.get('book')
+
+        member = get_object_or_404(Member, id=member_id)
+        book = get_object_or_404(Book, id=book_id)
+
+        if member.debt <= 500:
+            rent_fee = 10.00
+            if book.quantity > 0:
+                # Reduce the quantity of the book
+                book.quantity -= 1
+                book.save()
+                # Issue the book to the member
+                transaction = Transaction.objects.create(member=member, book=book, is_returned=False, rent_fee=rent_fee)
+                transaction.save()
+
+                return redirect('book')
+            else:
+                error_message = 'Book is not available'
+        else:
+            error_message = 'Member has outstanding debt'
+
+        return render(request, 'books/book_issue_error.html', {'error_message': error_message})
+
+    return render(request, 'books/book_issue.html', {'members': members, 'books': books})
+
+
+def issued_books(request):
+    issued_transactions = Transaction.objects.filter(is_returned=False)
+    return render(request, 'books/issued_books.html', {'issued_transactions': issued_transactions})
+
+
+#  handles the HTTP request for returning a book
+def return_book(request, member_id, book_id):
+    transaction = get_object_or_404(Transaction, member_id=member_id, book_id=book_id)
+
+    if transaction.return_date is None:
+        transaction.return_book()
+
+    return redirect('issued_books')

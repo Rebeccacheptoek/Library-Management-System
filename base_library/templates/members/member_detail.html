@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Member Detail</h1>
+<p>Name: {{ member.name }}</p>
+<p>Email: {{ member.email }}</p>
+<p>Address: {{ member.address }}</p>
+<p>Phone: {{ member.phone }}</p>
+<p>Membership_ID: {{ member.membership_ID }}</p>
+<!--<p>Borrowed Books: {{ member.borrowed_books }}</p>-->
+<!--<p>Penalty Status: {{ member.penalty_status }}</p>-->
+
+<h2>Borrowed Books</h2>
+{% if borrowed_books %}
+  <ul>
+    {% for transaction in borrowed_books %}
+      <li>{{ transaction.book.title }}</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No books currently borrowed.</p>
+{% endif %}
+
+<h2>Penalty Status</h2>
+{% if penalty_status %}
+  <p>Penalty status: True</p>
+  <p>Amount owed: {{ member.calculate_penalty_amount }}</p>
+{% else %}
+  <p>Penalty status: False</p>
+{% endif %}
+
+{% endblock %}

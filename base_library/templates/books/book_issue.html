@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Book Issued</h1>
+
+<form method="post">
+  {% csrf_token %}
+  <label for="member">Member:</label>
+  <select name="member" id="member">
+    {% for member in members %}
+      <option value="{{ member.id }}">{{ member.name }}</option>
+    {% endfor %}
+  </select>
+  <br>
+  <label for="book">Book:</label>
+  <select name="book" id="book">
+    {% for book in books %}
+      <option value="{{ book.id }}">{{ book.title }}</option>
+    {% endfor %}
+  </select>
+  <br>
+  <input type="submit" value="Issue Book">
+</form>
+
+<p><a href="{% url 'book' %}">My Books</a></p>
+{% endblock %}
