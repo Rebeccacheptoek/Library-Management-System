@@ -3,6 +3,7 @@ from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
@@ -66,13 +67,18 @@ from users.forms import CustomUserCreationForm
 #     return redirect('home')
 
 @login_required
-def index(request):
-    return render(request, 'index.html')
+def home(request):
+    return render(request, 'home.html')
 
 
 @login_required
 def book_index(request):
     books = Book.objects.all()
+    query = request.GET.get('q')
+    if query:
+        books = Book.objects.filter(Q(title__icontains=query) | Q(author__icontains=query))
+    else:
+        books = Book.objects.all()
 
     context = {'books': books}
     return render(request, 'books/book.html', context)
@@ -109,6 +115,12 @@ def update_book(request, pk):
     context = {'book': book, 'form': form}
 
     return render(request, 'books/update_book.html', context)
+
+
+def view_book(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+    context = {'book': book}
+    return render(request, 'books/book_detail.html', context)
 
 
 def member_index(request):
@@ -180,7 +192,7 @@ def issue_book(request):
                 transaction = Transaction.objects.create(member=member, book=book, is_returned=False, rent_fee=rent_fee)
                 transaction.save()
 
-                return redirect('book')
+                return redirect('issue_book')
             else:
                 error_message = 'Book is not available'
         else:
@@ -188,7 +200,12 @@ def issue_book(request):
 
         return render(request, 'books/book_issue_error.html', {'error_message': error_message})
 
-    return render(request, 'books/book_issue.html', {'members': members, 'books': books})
+    issued_transactions = Transaction.objects.filter(is_returned=False)
+    returned_books = Transaction.objects.filter(is_returned=True)
+
+    context = {'members': members, 'books': books, 'issued_transactions': issued_transactions, 'returned_books': returned_books}
+
+    return render(request, 'books/book_issue.html', context)
 
 
 def issued_books(request):
@@ -196,11 +213,32 @@ def issued_books(request):
     return render(request, 'books/issued_books.html', {'issued_transactions': issued_transactions})
 
 
-#  handles the HTTP request for returning a book
-def return_book(request, member_id, book_id):
-    transaction = get_object_or_404(Transaction, member_id=member_id, book_id=book_id)
+def return_book(request, transaction_id):
+    transaction = get_object_or_404(Transaction, id=transaction_id)
 
-    if transaction.return_date is None:
-        transaction.return_book()
+    if request.method == 'POST':
+        return_option = request.POST.get('return_option')
 
-    return redirect('issued_books')
+        if return_option == 'return':
+            transaction.is_returned = True
+            transaction.save()
+
+    return redirect('issue_book')
+
+
+def search_books(request):
+    search_query = request.GET.get('search_query', '')
+    books = Book.objects.filter(title__icontains=search_query) | Book.objects.filter(author__icontains=search_query)
+    context = {'books': books, 'search_query': search_query}
+    return render(request, 'search_results.html', context)
+
+
+def delete(request, book_id):
+    book = Book.objects.get(id=book_id)
+    if request.method == 'POST':
+        book.delete()
+        messages.success(request, 'The book has been deleted successfully.')
+
+        return redirect('book')
+    return render(request, 'books/delete.html', {'obj': book})
+

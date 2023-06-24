@@ -1,26 +1,167 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Book Issued</h1>
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Book Issue</h5>
 
-<form method="post">
-  {% csrf_token %}
-  <label for="member">Member:</label>
-  <select name="member" id="member">
-    {% for member in members %}
-      <option value="{{ member.id }}">{{ member.name }}</option>
-    {% endfor %}
-  </select>
-  <br>
-  <label for="book">Book:</label>
-  <select name="book" id="book">
-    {% for book in books %}
-      <option value="{{ book.id }}">{{ book.title }}</option>
-    {% endfor %}
-  </select>
-  <br>
-  <input type="submit" value="Issue Book">
-</form>
+        <!-- Default Tabs -->
+        <ul class="nav nav-tabs d-flex" id="myTabjustified" role="tablist">
+            <li class="nav-item flex-fill" role="presentation">
+                <button class="nav-link w-100 active" id="home-tab" data-bs-toggle="tab"
+                        data-bs-target="#home-justified" type="button" role="tab" aria-controls="home"
+                        aria-selected="true">Issue book
+                </button>
+            </li>
+            <li class="nav-item flex-fill" role="presentation">
+                <button class="nav-link w-100" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-justified"
+                        type="button" role="tab" aria-controls="profile" aria-selected="false">Returned Books
+                </button>
+            </li>
+            <li class="nav-item flex-fill" role="presentation">
+                <button class="nav-link w-100" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-justified"
+                        type="button" role="tab" aria-controls="contact" aria-selected="false">Books Issued
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content pt-2" id="myTabjustifiedContent">
+            <div class="tab-pane fade show active" id="home-justified" role="tabpanel" aria-labelledby="home-tab">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Issue book</h5>
 
+                        <form method="post">
+                            {% csrf_token %}
+                            <label for="member">Member:</label>
+                            <select name="member" id="member" class="col-md-12 form-select">
+                                {% for member in members %}
+                                <option value="{{ member.id }}">{{ member.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <br>
+                            <label for="book">Book:</label>
+                            <select name="book" id="book" class="col-md-12 form-select">
+                                {% for book in books %}
+                                <option value="{{ book.id }}">{{ book.title }}</option>
+                                {% endfor %}
+                            </select>
+                            <br>
+                            <input type="submit" class="btn btn-primary" value="Issue Book">
+                        </form>
+                    </div>
+                </div>
+            </div>
+             <!-- Returned Books tab-->
+            <div class="tab-pane fade" id="profile-justified" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="card">
+                    <div class="card-body">
+
+
+                        <table class="table datatable">
+                            <thead>
+                            <tr>
+                                <th scope="col">Member ID</th>
+                                <th scope="col">Member</th>
+                                <th scope="col">Book</th>
+                                <th scope="col">Issue Date</th>
+                                <th scope="col">Due Date</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for transaction in returned_books %}
+                            {% if transaction.is_returned == True %}
+                            <tr>
+                                <th scope="row">{{ transaction.member.membership_ID }}</th>
+                                <td>{{ transaction.member.name }}</td>
+                                <td>{{ transaction.book.title }}</td>
+                                <td>{{ transaction.issue_date }}</td>
+                                <td>{{ transaction.return_date }}</td>
+                                <td><a href="{% url 'issue_book' %}" class="btn btn-primary"><i class="bi bi-journal-check"></i> Issue Book</a></td>
+                                <td><a href="{% url 'view-book' transaction.book.id %}" class="btn btn-success"><i class="bi bi-eye-fill"></i> View Book</a></td>
+                            </tr>
+
+                            {% endif %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- End Table with stripped rows -->
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="tab-pane fade" id="contact-justified" role="tabpanel" aria-labelledby="contact-tab">
+                <div class="card">
+                    <div class="card-body">
+
+                        <!-- Issued Books -->
+                        <table class="table datatable">
+                            <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Member</th>
+                                <th scope="col">Book</th>
+                                <th scope="col">Issue Date</th>
+                                <th scope="col">Due Date</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for transaction in issued_transactions %}
+                            {% if transaction.is_returned == False %}
+                            <tr>
+                                <td>{{ transaction.id }}</td>
+                                <td>{{ transaction.member.name }}</td>
+                                <td>{{ transaction.book.title }}</td>
+                                <td>{{ transaction.issue_date }}</td>
+                                <td>{{ transaction.due_date }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#verticalycentered-{{ transaction.book.id }}" data-book-id="{{ transaction.book.id }}">
+                                        <i class="fas fa-reply"></i> Return book
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Return Confirmation Modal -->
+                            <div class="modal fade" id="verticalycentered-{{ transaction.book.id }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Return book</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to return this book "{{ transaction.book.title }}"?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Close
+                                            </button>
+                                            <form method="POST" action="{% url 'return_book' transaction.book.id %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="return_option" value="return">
+                                                <button type="submit" class="btn btn-primary">Return</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- End Vertically centered Modal-->
+                            {% endif %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- End Table with stripped rows -->
+
+                    </div>
+                </div>
+            </div>
+        </div><!-- End Default Tabs -->
+
+    </div>
+</div>
 <p><a href="{% url 'book' %}">My Books</a></p>
+
+
 {% endblock %}

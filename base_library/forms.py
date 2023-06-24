@@ -15,7 +15,8 @@ from base_library.models import Book, Member
 class BookForm(forms.ModelForm):
     class Meta:
         model = Book
-        fields = ['title', 'author', 'quantity', 'shelf_location', 'is_available']
+        fields = ['title', 'author', 'quantity', 'shelf_location']
+
 
 
 class MemberForm(forms.ModelForm):
@@ -26,6 +27,4 @@ class MemberForm(forms.ModelForm):
                   'address',
                   'phone',
                   'membership_ID',
-                  'borrowed_books',
-                  'penalty_status',
                   ]

@@ -3,34 +3,81 @@
 
 {% block content %}
 <section class="section">
-        {% if book.quantity > 0 %}
-        <a href="{% url 'issue_book' %}">Issue Book</a>
-        {% else %}
-        <p>Book unavailable</p>
-        {% endif %}
-    <button class="btn-primary" style="color: white;"><a href="{% url 'add-member' %}">Add Member</a></button>
-    <div class="row align-items-top">
-        <div class="col-lg-6">
-            <!-- Card with an image on left -->
-            {% for book in books %}
-            <div class="card mb-3">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="{% static 'assets/img/card.jpg' %}" class="img-fluid rounded-start" alt="...">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ book.title }} by {{ book.author }}</h5>
-                            <p class="card-text">Quantity - {{ book.quantity }}</br> Location - {{ book.shelf_location }}
-                                </br> Available - {{ book.get_availability_display }}.</p>
+    <div class="row">
+        <div class="container">
+            <button type="submit" class="btn btn-primary float-right"><i class="bi bi-plus"></i><a
+                    href="{% url 'add-book' %}" style="color: white;">Add Book</a></button>
+        </div>
+    </div>
+    <div class="col py-5">
+        <div class="row align-items-top">
+            <div class="col-md-12">
+                <!-- Card with an image on left -->
+                {% for book in books %}
+                <div class="card mb-3 col-md-12">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="{% static 'assets/img/book2.jpeg' %}" class="img-fluid rounded-start" alt="...">
+                        </div>
+                        <div class="col-md-12">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ book.title }} by {{ book.author }}</h5>
+                                <p class="card-text">Quantity - {{ book.quantity }}</br> Location - {{ book.shelf_location }}
+                                    </br> Available - {{ book.get_availability_display }}.</p>
+                                <div class="row"><a href="{% url 'view-book' book_id=book.id %}"
+                                                    class="btn btn-dark float-right"><i class="bi bi-eye-fill"></i>
+                                    View Book</a>
+                                    <!-- Delete Button -->
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                            data-bs-target="#deletemodal{{ book.id }}">
+                                        Delete
+                                    </button>
 
+                                    <!-- Delete Confirmation Modal -->
+                                    <div class="modal fade" id="deletemodal{{ book.id }}" tabindex="-1" role="dialog"
+                                         aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                                            aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>Are you sure you want to delete the book "{{ book.title }}"?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Cancel
+                                                    </button>
+                                                    <form action="{% url 'delete' book_id=book.id %}" method="POST">
+                                                        {% csrf_token %}
+                                                        <input type="submit" class="btn btn-danger" value="Delete">
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div><!-- End Card with an image on left -->
-            {% endfor %}
+                {% endfor %}
+            </div>
         </div>
-
     </div>
 </section>
+
+{% if deleted %}
+<script>
+    $(document).ready(function() {
+        var deletedBookId = '{{ deleted }}';
+        var modalId = '#deletemodal{{ book.id }}' + deletedBookId;
+        $(modalId).modal('show');
+    });
+</script>
+{% endif %}
 {% endblock %}
