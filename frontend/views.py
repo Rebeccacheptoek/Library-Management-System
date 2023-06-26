@@ -2,5 +2,5 @@ from django.shortcuts import render
 
 
 # Create your views here.
-def frontend(request):
-    return render(request, 'frontend.html')
+def frontend_home(request):
+    return render(request, 'frontend/frontend.html')

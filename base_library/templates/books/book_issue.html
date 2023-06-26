@@ -33,20 +33,19 @@
                         <form method="post">
                             {% csrf_token %}
                             <label for="member">Member:</label>
-                            <select name="member" id="member" class="col-md-12 form-select">
+                            <select name="member" id="member" class="col-md-12 form-select form-control">
                                 {% for member in members %}
                                 <option value="{{ member.id }}">{{ member.name }}</option>
                                 {% endfor %}
                             </select>
                             <br>
                             <label for="book">Book:</label>
-                            <select name="book" id="book" class="col-md-12 form-select">
+                            <select name="book" id="book" class="col-md-12 form-select form-control">
                                 {% for book in books %}
                                 <option value="{{ book.id }}">{{ book.title }}</option>
                                 {% endfor %}
                             </select>
-                            <br>
-                            <input type="submit" class="btn btn-primary" value="Issue Book">
+                            <input type="submit" class="btn btn-primary mt-2" value="Issue Book">
                         </form>
                     </div>
                 </div>
@@ -118,13 +117,13 @@
                                 <td>{{ transaction.due_date }}</td>
                                 <td>
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#verticalycentered-{{ transaction.book.id }}" data-book-id="{{ transaction.book.id }}">
+                                            data-bs-target="#verticalycentered-{{ transaction.id }}" data-book-id="{{ transaction.book.id }}">
                                         <i class="fas fa-reply"></i> Return book
                                     </button>
                                 </td>
                             </tr>
                             <!-- Return Confirmation Modal -->
-                            <div class="modal fade" id="verticalycentered-{{ transaction.book.id }}" tabindex="-1">
+                            <div class="modal fade" id="verticalycentered-{{ transaction.id }}" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -139,7 +138,7 @@
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                                 Close
                                             </button>
-                                            <form method="POST" action="{% url 'return_book' transaction.book.id %}">
+                                            <form method="POST" action="{% url 'return_book' transaction.id %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="return_option" value="return">
                                                 <button type="submit" class="btn btn-primary">Return</button>

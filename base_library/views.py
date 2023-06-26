@@ -222,7 +222,7 @@ def return_book(request, transaction_id):
         if return_option == 'return':
             transaction.is_returned = True
             transaction.save()
-
+##TODO code to increment book quantity by 1
     return redirect('issue_book')
 
 
