@@ -66,15 +66,3 @@ The Library System is a web-based application that manages a library's collectio
 
 Contributions to the Library System are welcome! If you find any bugs or have suggestions for new features, please open an issue or submit a pull request.
 
-## Library management system
-![Alt Text](https://github.com/Rebeccacheptoek/Library-Management-System/blob/main/screenshots/Screenshot1.png)
- ### Sign up page
-![Sign up page](https://github.com/Rebeccacheptoek/Library-Management-System/blob/main/screenshots/Screenshot5.png)
-
- ### Login page
-![Login page](https://github.com/Rebeccacheptoek/Library-Management-System/blob/main/screenshots/Screenshot4.png)
-
-### Issue book's tab
-![Issue book](https://github.com/Rebeccacheptoek/Library-Management-System/blob/main/screenshots/Screenshot3.png)
-
-
