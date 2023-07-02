@@ -14,57 +14,29 @@ from base_library.models import Book, Member, Transaction
 from users.forms import CustomUserCreationForm
 
 
-# def register(request):
-#     if request.user.is_authenticated:
-#         return redirect('home')
-#
-#     if request.method == 'POST':
-#         form = CustomUserCreationForm(request.POST)
-#
-#         if form.is_valid():
-#             form.save()
-#             # first_name = form.cleaned_data['first_name']
-#             # last_name = form.cleaned_data['last_name']
-#             email = form.cleaned_data['email']
-#             password = form.cleaned_data['password1']
-#             user = authenticate(email=email, password=password)
-#             login(request, user)
-#             return redirect('home')
-#
-#         else:
-#             return render(request, 'registration/register.html', {'form': form})
-#
-#     else:
-#         form = CustomUserCreationForm()
-#         return render(request, 'registration/register.html', {'form': form})
-#
-#
-# def login_user(request):
-#     if request.user.is_authenticated:
-#         return redirect('book')
-#
-#     if request.method == 'POST':
-#         email = request.POST.get('email')
-#         password = request.POST['password']
-#         user = authenticate(request, email=email, password=password)
-#         print(email, password)
-#         if user is not None:
-#             login(request, user)
-#             return redirect('home')
-#         else:
-#             form = AuthenticationForm()
-#             return render(request, 'registration/login.html', {'form': form})
-#
-#     else:
-#         form = AuthenticationForm()
-#
-#     context = {'form': form}
-#     return render(request, 'registration/login.html', context)
-#
-#
-# def logout_user(request):
-#     logout(request)
-#     return redirect('home')
+def dashboard(request):
+    transactions = Transaction.objects.all()
+    issued_books_count = transactions.filter(is_returned=False).count()
+    returned_books_count = transactions.filter(is_returned=True).count()
+
+    books = Book.objects.all()
+    book_labels = [book.title for book in books]
+    book_quantities = [book.quantity for book in books]
+
+    members = Member.objects.all()
+    member_names = [member.name for member in members]
+    loan_amounts_list = [float(member.debt) for member in members]
+
+    context = {
+        'member_names': member_names,
+        'loan_amounts_list': loan_amounts_list,
+        'book_labels': book_labels,
+        'book_quantities': book_quantities,
+        'issued_books_count': issued_books_count,
+        'returned_books_count': returned_books_count,
+    }
+    return render(request, 'books/book_report.html', context)
+
 
 @login_required
 def home(request):
@@ -82,6 +54,7 @@ def book_index(request):
 
     context = {'books': books}
     return render(request, 'books/book.html', context)
+
 
 @login_required
 def add_book(request):
@@ -203,7 +176,8 @@ def issue_book(request):
     issued_transactions = Transaction.objects.filter(is_returned=False)
     returned_books = Transaction.objects.filter(is_returned=True)
 
-    context = {'members': members, 'books': books, 'issued_transactions': issued_transactions, 'returned_books': returned_books}
+    context = {'members': members, 'books': books, 'issued_transactions': issued_transactions,
+               'returned_books': returned_books}
 
     return render(request, 'books/book_issue.html', context)
 
@@ -222,7 +196,11 @@ def return_book(request, transaction_id):
         if return_option == 'return':
             transaction.is_returned = True
             transaction.save()
-##TODO code to increment book quantity by 1
+
+            # Increment book quantity by 1
+            book = transaction.book
+            book.quantity += 1
+            book.save()
     return redirect('issue_book')
 
 
@@ -241,4 +219,3 @@ def delete(request, book_id):
 
         return redirect('book')
     return render(request, 'books/delete.html', {'obj': book})
-
