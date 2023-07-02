@@ -14,6 +14,10 @@ The Library System is a web-based application that manages a library's collectio
 
 ## Screenshots
 
+### Home Page
+![Register](https://github.com/Rebeccacheptoek/Library-Management-System/blob/main/screenshots/home.png)
+*Screenshot of the home page showcasing the main dashboard and navigation menu.*
+
 ### Register
 ![Register](https://github.com/Rebeccacheptoek/Library-Management-System/blob/main/screenshots/register.png)
 *Screenshot of the Register page where users can create a new account.*
